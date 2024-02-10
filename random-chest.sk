@@ -1,0 +1,12 @@
+command /harita:
+    permission: rem.perm.harita
+    description: cek yazmak için
+    trigger:
+        give 1 paper named "&l&2Hazine Haritası" to player
+
+on rightclick:
+    if player's held item is paper named "&l&2Hazine Haritası":
+        set {_loc} to location(random number from -500 to 500, random number from 0 to 120, random number from -500 to 500, world("world"))
+        set block at {_loc} to chest
+        add stone sword to inventory of block at {_loc}
+        send "Hazine haritası &2%{_loc}% konumunu gösteriyor" to player
