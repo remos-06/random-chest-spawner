@@ -1,6 +1,6 @@
 command /harita:
     permission: rem.perm.harita
-    description: cek yazmak için
+    description: harita görmek için
     trigger:
         give 1 paper named "&l&2Hazine Haritası" to player
 
