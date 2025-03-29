@@ -2,11 +2,37 @@ command /harita:
     permission: rem.perm.harita
     description: harita görmek için
     trigger:
-        give 1 paper named "&l&2Hazine Haritası" to player
+        give 1 paper named "&l&2Hazine Haritası" with lore "&7Sağ tıklayarak hazineyi bul!" to player
+        send "&aHazine haritası envanterine eklendi!" to player
 
 on rightclick:
     if player's held item is paper named "&l&2Hazine Haritası":
-        set {_loc} to location(random number from -500 to 500, random number from 0 to 120, random number from -500 to 500, world("world"))
+        # Generate random location within reasonable distance from player
+        set {_x} to random number from -200 to 200
+        set {_z} to random number from -200 to 200
+        set {_loc} to location(player's x-coordinate + {_x}, 0, player's z-coordinate + {_z}, player's world)
+        
+        # Find a suitable Y coordinate (top solid block)
+        set {_y} to highest block at {_loc}
+        set {_loc} to location(player's x-coordinate + {_x}, {_y} + 1, player's z-coordinate + {_z}, player's world)
+        
+        # Create the chest and add items
         set block at {_loc} to chest
-        add stone sword to inventory of block at {_loc}
-        send "Hazine haritası &2%{_loc}% konumunu gösteriyor" to player
+        set {_chest} to block at {_loc}
+        set {_inv} to inventory of {_chest}
+        add stone sword to {_inv}
+        
+        # Optional: Add more random loot
+        chance of 50%:
+            add 5 iron ingot to {_inv}
+        chance of 25%:
+            add diamond to {_inv}
+        
+        # Remove the map from player's hand
+        remove 1 of player's held item from player
+        
+        # Send message with coordinates
+        send "&aHazine haritası &2%round({_loc}'s x-coordinate)%, %round({_loc}'s y-coordinate)%, %round({_loc}'s z-coordinate)% &akonumunu gösteriyor" to player
+        
+        # Optional: Add particles or sound effects
+        play sound "entity.experience_orb.pickup" at player with volume 1
